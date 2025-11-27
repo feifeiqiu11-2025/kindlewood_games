@@ -18,33 +18,28 @@ class WordRainGame {
     this.gameDuration = const Duration(minutes: 2),
   });
 
-  /// Get fall speed based on level
+  /// Get fall speed based on level (much slower for kids)
   double get fallSpeed {
     switch (level) {
       case 1:
-        return 50.0; // Slow
+        return 15.0; // Very slow for little kids
       case 2:
-        return 75.0; // Medium
+        return 25.0; // Slow
       case 3:
-        return 100.0; // Fast
+        return 35.0; // Medium
       default:
-        return 50.0;
+        return 15.0;
     }
   }
 
   /// Get number of words falling simultaneously
-  int get simultaneousWords {
-    switch (level) {
-      case 1:
-        return 3;
-      case 2:
-        return 4;
-      case 3:
-        return 5;
-      default:
-        return 3;
-    }
-  }
+  /// All levels: 3 words
+  int get simultaneousWords => 3;
+
+  /// Show emoji with words
+  /// Level 1: with emoji
+  /// Level 2 & 3: without emoji
+  bool get showEmoji => level == 1;
 
   /// Record a correct answer
   void recordCorrect() {
