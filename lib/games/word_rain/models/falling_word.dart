@@ -123,7 +123,7 @@ class FallingWord {
 
       // Misc
       'heart': '❤️', 'bat': '🦇', 'web': '🕸️', 'garden': '🏡', 'party': '🎉',
-      'celebration': '🎊', 'birthday': '🎂', 'christmas': '🎄', 'gift': '🎁', 'present': '🎁',
+      'celebration': '🎊', 'birthday': '🎂', 'christmas': '🎄', 'present': '🎁',
       'magic': '✨', 'fairy': '🧚', 'wizard': '🧙', 'princess': '👸', 'prince': '🤴',
       'king': '🤴', 'queen': '👸', 'knight': '⚔️', 'pirate': '🏴‍☠️', 'ninja': '🥷',
       'time': '⏰', 'clock': '🕐', 'calendar': '📅', 'bell': '🔔', 'alarm': '⏰',
