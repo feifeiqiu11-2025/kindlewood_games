@@ -46,7 +46,7 @@ class FallingWord {
       'panda': '🐼', 'koala': '🐨', 'sloth': '🦥', 'otter': '🦦', 'skunk': '🦨',
 
       // Nature & Weather
-      'tree': '🌳', 'sun': '☀️', 'moon': '🌙', 'star': '⭐', 'cloud': '☁️',
+      'tree': '🌳', 'sun': '☀️', 'moon': '🌙', 'cloud': '☁️',
       'rain': '🌧️', 'snow': '❄️', 'flower': '🌸', 'grass': '🌱', 'water': '💧',
       'fire': '🔥', 'rainbow': '🌈', 'mountain': '⛰️', 'volcano': '🌋', 'beach': '🏖️',
       'ocean': '🌊', 'river': '🏞️', 'forest': '🌲', 'desert': '🏜️', 'island': '🏝️',
@@ -106,8 +106,8 @@ class FallingWord {
       'golf': '⛳', 'hockey': '🏒', 'cricket': '🏏', 'bowling': '🎳', 'boxing': '🥊',
 
       // Space & Science
-      'rocket': '🚀', 'planet': '🪐', 'earth': '🌍', 'mars': '🔴', 'moon': '🌙',
-      'star': '⭐', 'comet': '☄️', 'galaxy': '🌌', 'telescope': '🔭', 'satellite': '🛰️',
+      'rocket': '🚀', 'planet': '🪐', 'earth': '🌍', 'mars': '🔴',
+      'comet': '☄️', 'galaxy': '🌌', 'telescope': '🔭', 'satellite': '🛰️',
       'robot': '🤖', 'alien': '👽', 'ufo': '🛸', 'atom': '⚛️', 'magnet': '🧲',
 
       // Tools & Items
