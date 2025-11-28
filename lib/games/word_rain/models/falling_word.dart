@@ -106,7 +106,7 @@ class FallingWord {
       'golf': '⛳', 'hockey': '🏒', 'cricket': '🏏', 'bowling': '🎳', 'boxing': '🥊',
 
       // Space & Science
-      'rocket': '🚀', 'planet': '🪐', 'earth': '🌍', 'mars': '🔴',
+      'rocket': '🚀', 'star': '⭐', 'planet': '🪐', 'earth': '🌍', 'mars': '🔴',
       'comet': '☄️', 'galaxy': '🌌', 'telescope': '🔭', 'satellite': '🛰️',
       'robot': '🤖', 'alien': '👽', 'ufo': '🛸', 'atom': '⚛️', 'magnet': '🧲',
 
