@@ -243,7 +243,7 @@ class _WordRainScreenState extends State<WordRainScreen>
       _isSpawning = true; // Set flag immediately to prevent multiple triggers
       // Clear old words and spawn new ones
       Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted && _isGameRunning) {
+        if (mounted && _isGameRunning && _fallingWords.isNotEmpty) {
           setState(() => _fallingWords = []);
           _spawnNewWords();
         }
