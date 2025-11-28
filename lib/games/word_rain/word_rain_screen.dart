@@ -347,29 +347,42 @@ class _WordRainScreenState extends State<WordRainScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.lightBlue.shade200, Colors.lightBlue.shade50, Colors.green.shade100],
+    return WillPopScope(
+      onWillPop: () async {
+        // Return game results when user presses back button
+        Navigator.of(context).pop({
+          'treasures': _treasuresCollected,
+          'score': _treasuresCollected,
+          'correct': _game.wordsCorrect,
+          'total': _game.wordsTotal,
+          'duration': widget.gameDuration.inSeconds - _remainingSeconds,
+        });
+        return false; // We handle the pop ourselves
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.lightBlue.shade200, Colors.lightBlue.shade50, Colors.green.shade100],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ..._buildClouds(),
-              _buildGameArea(),
-              _buildTopBar(),
-              _buildRepeatButton(),
-              if (_encouragementText.isNotEmpty) _buildEncouragementOverlay(),
-              if (_showCorrectFeedback) _buildCorrectFeedback(),
-              if (_showWrongFeedback) _buildWrongFeedback(),
-              if (_isGameOver) _buildGameOverOverlay(),
-              if (_isPaused) _buildPauseOverlay(),
-              if (_showIntro) _buildIntroOverlay(),
-            ],
+          child: SafeArea(
+            child: Stack(
+              children: [
+                ..._buildClouds(),
+                _buildGameArea(),
+                _buildTopBar(),
+                _buildRepeatButton(),
+                if (_encouragementText.isNotEmpty) _buildEncouragementOverlay(),
+                if (_showCorrectFeedback) _buildCorrectFeedback(),
+                if (_showWrongFeedback) _buildWrongFeedback(),
+                if (_isGameOver) _buildGameOverOverlay(),
+                if (_isPaused) _buildPauseOverlay(),
+                if (_showIntro) _buildIntroOverlay(),
+              ],
+            ),
           ),
         ),
       ),
@@ -393,7 +406,19 @@ class _WordRainScreenState extends State<WordRainScreen>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.of(context).pop()),
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                // Return game results when user taps back button
+                Navigator.of(context).pop({
+                  'treasures': _treasuresCollected,
+                  'score': _treasuresCollected,
+                  'correct': _game.wordsCorrect,
+                  'total': _game.wordsTotal,
+                  'duration': widget.gameDuration.inSeconds - _remainingSeconds,
+                });
+              },
+            ),
             // Treasure count instead of score
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -542,7 +567,7 @@ class _WordRainScreenState extends State<WordRainScreen>
   }
 
   Widget _buildEncouragementOverlay() => Positioned(
-    top: 120,
+    top: 70,
     left: 0,
     right: 0,
     child: Center(
@@ -712,23 +737,25 @@ class _WordRainScreenState extends State<WordRainScreen>
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 24),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                ElevatedButton(
-                  onPressed: () { Navigator.of(context).pop(); widget.onGameComplete?.call(); },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                  child: const Text('Exit'),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop({
+                    'treasures': _treasuresCollected,
+                    'score': _treasuresCollected,
+                    'correct': _game.wordsCorrect,
+                    'total': _game.wordsTotal,
+                    'duration': widget.gameDuration.inSeconds - _remainingSeconds,
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    _game = WordRainGame(level: widget.level, words: widget.words, gameDuration: widget.gameDuration);
-                    _remainingSeconds = widget.gameDuration.inSeconds;
-                    setState(() { _isGameOver = false; _fallingWords = []; _isSpawning = false; });
-                    _startGame();
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  child: const Text('Play Again'),
+                child: const Text(
+                  'Close',
+                  style: TextStyle(fontSize: 18),
                 ),
-                ]),
+              ),
               ]),
             ),
           ),
