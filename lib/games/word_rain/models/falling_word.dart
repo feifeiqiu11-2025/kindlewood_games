@@ -45,7 +45,7 @@ class FallingWord {
       'plant': '🪴', 'cactus': '🌵', 'palm': '🌴', 'bamboo': '🎋', 'herb': '🌿',
 
       // Colors
-      'red': '🔴', 'blue': '🔵', 'green': '🟢', 'yellow': '🟡', 'orange': '🟠',
+      'red': '🔴', 'blue': '🔵', 'green': '🟢', 'yellow': '🟡',
       'purple': '🟣', 'brown': '🟤', 'black': '⚫', 'white': '⚪', 'pink': '🩷',
 
       // Numbers
