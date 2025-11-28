@@ -19,18 +19,28 @@ class FallingWord {
     this.isTarget = false,
   });
 
+  /// Check if a word has a valid emoji mapping (not fallback)
+  static bool hasEmoji(String word) {
+    return getEmoji(word) != '📝';
+  }
+
+  /// Filter words to only include those with emoji mappings
+  static List<String> filterWordsWithEmojis(List<String> words) {
+    return words.where((word) => hasEmoji(word)).toList();
+  }
+
   /// Get emoji for a word
   static String getEmoji(String word) {
     const wordEmojis = {
       // Animals
       'cat': '🐱', 'dog': '🐕', 'bird': '🐦', 'fish': '🐟', 'bear': '🐻',
-      'fox': '🦊', 'owl': '🦉', 'pig': '🐷', 'cow': '🐮', 'hen': '🐔',
+      'fox': '🦊', 'owl': '🦉', 'pig': '🐷', 'cow': '🐮',
       'bee': '🐝', 'ant': '🐜', 'bug': '🐛', 'frog': '🐸', 'lion': '🦁',
       'duck': '🦆', 'deer': '🦌', 'turtle': '🐢', 'rabbit': '🐰', 'elephant': '🐘',
       'monkey': '🐵', 'tiger': '🐯', 'horse': '🐴', 'sheep': '🐑', 'goat': '🐐',
       'zebra': '🦓', 'giraffe': '🦒', 'whale': '🐋', 'dolphin': '🐬', 'shark': '🦈',
-      'penguin': '🐧', 'chicken': '🐔', 'rooster': '🐓', 'eagle': '🦅', 'parrot': '🦜',
-      'snake': '🐍', 'lizard': '🦎', 'dragon': '🐉', 'dinosaur': '🦕', 'crab': '🦀',
+      'penguin': '🐧', 'rooster': '🐓', 'eagle': '🦅', 'parrot': '🦜',
+      'snake': '🐍', 'lizard': '🦎', 'dragon': '🐉', 'dinosaur': '🦕', 'crab': '🦀', 'hen': '🐔',
       'octopus': '🐙', 'squid': '🦑', 'snail': '🐌', 'spider': '🕷️', 'butterfly': '🦋',
       'mouse': '🐭', 'rat': '🐀', 'hamster': '🐹', 'bunny': '🐰', 'wolf': '🐺',
       'panda': '🐼', 'koala': '🐨', 'sloth': '🦥', 'otter': '🦦', 'skunk': '🦨',
