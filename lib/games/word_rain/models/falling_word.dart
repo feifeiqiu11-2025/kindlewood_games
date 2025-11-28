@@ -22,13 +22,31 @@ class FallingWord {
   /// Get emoji for a word
   static String getEmoji(String word) {
     const wordEmojis = {
-      'cat': '🐱', 'dog': '🐕', 'bird': '🐦', 'fish': '🐟', 'tree': '🌳',
-      'sun': '☀️', 'moon': '🌙', 'star': '⭐', 'cloud': '☁️', 'rain': '🌧️',
+      // Animals
+      'cat': '🐱', 'dog': '🐕', 'bird': '🐦', 'fish': '🐟', 'bear': '🐻',
+      'fox': '🦊', 'owl': '🦉', 'pig': '🐷', 'cow': '🐮', 'hen': '🐔',
+      'bee': '🐝', 'ant': '🐜', 'bug': '🐛', 'frog': '🐸', 'lion': '🦁',
+      'duck': '🦆', 'deer': '🦌', 'turtle': '🐢', 'rabbit': '🐰', 'elephant': '🐘',
+
+      // Nature
+      'tree': '🌳', 'sun': '☀️', 'moon': '🌙', 'star': '⭐', 'cloud': '☁️',
+      'rain': '🌧️', 'snow': '❄️', 'flower': '🌸', 'grass': '🌱', 'water': '💧',
+      'fire': '🔥', 'rainbow': '🌈', 'mountain': '⛰️',
+
+      // Colors
       'red': '🔴', 'blue': '🔵', 'green': '🟢', 'yellow': '🟡', 'orange': '🟠',
+
+      // Numbers
       'one': '1️⃣', 'two': '2️⃣', 'three': '3️⃣', 'four': '4️⃣', 'five': '5️⃣',
-      'happy': '😊', 'sad': '😢', 'big': '🐘', 'small': '🐜', 'fast': '🏃',
+
+      // Emotions & Actions
+      'happy': '😊', 'sad': '😢', 'run': '🏃', 'jump': '🦘', 'play': '🎮',
+
+      // Objects & Food
       'apple': '🍎', 'banana': '🍌', 'car': '🚗', 'house': '🏠', 'book': '📚',
-      'ball': '⚽', 'flower': '🌸', 'heart': '❤️', 'water': '💧', 'fire': '🔥',
+      'ball': '⚽', 'heart': '❤️', 'hat': '🎩', 'bat': '🦇', 'web': '🕸️',
+      'school': '🏫', 'castle': '🏰', 'rocket': '🚀', 'planet': '🪐',
+      'butterfly': '🦋', 'garden': '🏡',
     };
     return wordEmojis[word.toLowerCase()] ?? '📝';
   }
