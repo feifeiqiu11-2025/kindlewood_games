@@ -114,7 +114,7 @@ class FallingWord {
       'hammer': '🔨', 'wrench': '🔧', 'saw': '🪚', 'scissors': '✂️', 'knife': '🔪',
       'fork': '🍴', 'spoon': '🥄', 'plate': '🍽️', 'cup': '☕', 'bottle': '🍼',
       'coin': '🪙', 'money': '💰', 'gem': '💎', 'ring': '💍', 'medal': '🏅',
-      'trophy': '🏆', 'award': '🥇', 'ticket': '🎟️', 'paint': '🎨', 'brush': '🖌️',
+      'trophy': '🏆', 'award': '🥇', 'ticket': '🎟️', 'brush': '🖌️',
 
       // Places & Buildings
       'park': '🏞️', 'playground': '🛝', 'farm': '🚜', 'zoo': '🦁', 'circus': '🎪',
