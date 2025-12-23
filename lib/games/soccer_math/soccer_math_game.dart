@@ -24,9 +24,9 @@ class SoccerMathGame {
   int totalAttempts = 0;
   int routesCompleted = 0;
 
-  // Constants
-  static const double playerHitRadius = 0.08; // Generous hit zone
-  static const double goalHitRadius = 0.12; // Even more generous for goals
+  // Constants - HUGE hit zones for kids (field is 0-1 normalized)
+  static const double playerHitRadius = 0.35; // Almost half the field width
+  static const double goalHitRadius = 0.40; // Even larger for goals
 
   SoccerMathGame({
     this.level = 1,
@@ -134,6 +134,7 @@ class SoccerMathGame {
   }
 
   /// Process a kick attempt and return the result
+  /// SIMPLE APPROACH: Only check if the TARGET is hit, ignore other players
   KickResult processKick(double aimAngle) {
     totalAttempts++;
 
@@ -141,21 +142,14 @@ class SoccerMathGame {
     final direction = Offset(cos(aimAngle), sin(aimAngle));
     final startPos = ball.position;
 
-    // Find first player or goal hit along the direction
-    final hitResult = _findHitTarget(startPos, direction);
+    // Debug: print kick info
+    print('⚽ Kick from ${startPos.dx.toStringAsFixed(2)}, ${startPos.dy.toStringAsFixed(2)}');
+    print('⚽ Angle: ${(aimAngle * 180 / 3.14159).toStringAsFixed(1)}°');
 
-    if (hitResult == null) {
-      // Missed everything
-      return KickResult(
-        type: KickResultType.missedAll,
-        message: "Oops! Try again!",
-      );
-    }
-
-    if (hitResult.isGoal) {
-      // Hit a goal
-      if (currentRoute?.isReadyForGoal == true) {
-        // Correct! Route complete
+    // Check if ready for goal
+    if (currentRoute?.isReadyForGoal == true) {
+      // Check if aiming at either goal
+      if (_isAimingAtGoal(startPos, direction)) {
         treasures++;
         routesCompleted++;
         correctPasses++;
@@ -167,42 +161,85 @@ class SoccerMathGame {
         return KickResult(
           type: KickResultType.goalScored,
           message: "GOAL! Great job!",
-          targetPosition: hitResult.position,
-        );
-      } else {
-        // Shot at goal too early
-        return KickResult(
-          type: KickResultType.wrongTarget,
-          message: "Complete the passes first!",
+          targetPosition: direction.dx > 0 ? const Offset(0.95, 0.5) : const Offset(0.05, 0.5),
         );
       }
     }
 
-    // Hit a player
-    final hitPlayer = hitResult.player!;
+    // Find the target player
+    final targetNumber = currentRoute?.currentTargetNumber;
+    if (targetNumber == null) {
+      return KickResult(
+        type: KickResultType.missedAll,
+        message: "Oops! Try again!",
+      );
+    }
 
-    if (currentRoute?.isCurrentTarget(hitPlayer.jerseyNumber) == true) {
+    // Find target player
+    final targetPlayer = players.firstWhere(
+      (p) => p.jerseyNumber == targetNumber,
+      orElse: () => players.first,
+    );
+
+    print('⚽ Target: #$targetNumber at (${targetPlayer.position.dx.toStringAsFixed(2)}, ${targetPlayer.position.dy.toStringAsFixed(2)})');
+
+    // Check if aiming at target player (VERY generous)
+    if (_isAimingAtPlayer(startPos, direction, targetPlayer)) {
       // Correct pass!
       correctPasses++;
-      ballHolderId = hitPlayer.id;
-      ball = Ball(position: hitPlayer.position);
+      ballHolderId = targetPlayer.id;
+      // DON'T update ball position here - let animation handle it
+      // ball = Ball(position: targetPlayer.position);
       currentRoute = currentRoute!.advance();
 
       final isLastPass = currentRoute!.isReadyForGoal;
       return KickResult(
         type: KickResultType.correctPass,
         message: isLastPass ? "Now shoot to goal!" : "Great pass!",
-        targetPosition: hitPlayer.position,
-        hitPlayer: hitPlayer,
+        targetPosition: targetPlayer.position,
+        hitPlayer: targetPlayer,
       );
     } else {
-      // Wrong player
+      // Wrong direction
       return KickResult(
         type: KickResultType.wrongTarget,
-        message: "Oops! Find number ${currentRoute?.currentTargetNumber}",
-        hitPlayer: hitPlayer,
+        message: "Oops! Find number $targetNumber",
       );
     }
+  }
+
+  /// Check if aiming at a specific player (very generous)
+  bool _isAimingAtPlayer(Offset start, Offset direction, FieldPlayer player) {
+    final toPlayer = Offset(
+      player.position.dx - start.dx,
+      player.position.dy - start.dy,
+    );
+
+    // Normalize direction
+    final dirLen = sqrt(direction.dx * direction.dx + direction.dy * direction.dy);
+    final normDir = Offset(direction.dx / dirLen, direction.dy / dirLen);
+
+    // Normalize to player
+    final playerLen = sqrt(toPlayer.dx * toPlayer.dx + toPlayer.dy * toPlayer.dy);
+    final normToPlayer = Offset(toPlayer.dx / playerLen, toPlayer.dy / playerLen);
+
+    // Dot product - how aligned are they? (1.0 = perfect, 0 = perpendicular, -1 = opposite)
+    final dot = normDir.dx * normToPlayer.dx + normDir.dy * normToPlayer.dy;
+
+    print('⚽ Aiming check: dot=${ dot.toStringAsFixed(3)} (need > 0.5)');
+
+    // Very generous - just need to be roughly pointing at them (within ~60 degrees)
+    return dot > 0.5;
+  }
+
+  /// Check if aiming at a goal
+  bool _isAimingAtGoal(Offset start, Offset direction) {
+    // Normalize direction
+    final dirLen = sqrt(direction.dx * direction.dx + direction.dy * direction.dy);
+    final normDir = Offset(direction.dx / dirLen, direction.dy / dirLen);
+
+    // Check horizontal component - must be strongly left or right
+    return normDir.dx.abs() > 0.5;
   }
 
   /// Find the first target hit along a direction
@@ -268,9 +305,13 @@ class SoccerMathGame {
       final perpY = start.dy + projection * normDir.dy - player.position.dy;
       final perpDist = sqrt(perpX * perpX + perpY * perpY);
 
+      // Debug: print check for each player
+      print('⚽ Checking #${player.jerseyNumber} at (${player.position.dx.toStringAsFixed(2)}, ${player.position.dy.toStringAsFixed(2)}) - proj: ${projection.toStringAsFixed(3)}, perpDist: ${perpDist.toStringAsFixed(3)}, hitRadius: $playerHitRadius');
+
       if (perpDist < playerHitRadius && projection < closestDistance) {
         closestDistance = projection;
         closestPlayer = player;
+        print('⚽ → This is a HIT!');
       }
     }
 
