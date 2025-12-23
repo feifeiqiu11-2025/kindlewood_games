@@ -61,9 +61,6 @@ class _SoccerMathScreenState extends State<SoccerMathScreen>
   bool _showFeedback = false;
   int? _highlightedPlayerId;
 
-  // Player image loading
-  bool _playerImageLoaded = false;
-
   @override
   void initState() {
     super.initState();
@@ -77,27 +74,9 @@ class _SoccerMathScreenState extends State<SoccerMathScreen>
     _tts = FlutterTts();
     _initAudio();
     _initAnimations();
-    _preloadPlayerImage();
 
     // Start intro sequence
     _startIntroSequence();
-  }
-
-  Future<void> _preloadPlayerImage() async {
-    // Try to preload the player image
-    try {
-      await precacheImage(
-        const AssetImage('assets/images/soccer_math/player_yellow.png',
-            package: 'kindlewood_games'),
-        context,
-      );
-      if (mounted) {
-        setState(() => _playerImageLoaded = true);
-      }
-    } catch (e) {
-      debugPrint('Could not load player image: $e');
-      // Will use emoji fallback
-    }
   }
 
   Future<void> _initAudio() async {
@@ -633,9 +612,6 @@ class _SoccerMathScreenState extends State<SoccerMathScreen>
                 // Ball with aim arrow
                 _buildBall(fieldSize),
 
-                // Player character (blue)
-                _buildPlayerCharacter(fieldSize),
-
                 // Feedback message
                 if (_showFeedback && _feedbackMessage != null)
                   _buildFeedbackOverlay(),
@@ -686,66 +662,45 @@ class _SoccerMathScreenState extends State<SoccerMathScreen>
     final isHighlighted = player.id == _highlightedPlayerId;
 
     return Positioned(
-      left: x - 30,
-      top: y - 40,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Jersey number
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: isHighlighted ? Colors.yellow : Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: isHighlighted
-                  ? [
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.8),
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Text(
-              '${player.jerseyNumber}',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: isHighlighted ? Colors.black : Colors.green.shade800,
-              ),
+      left: x - 25,
+      top: y - 25,
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.yellow.shade600,
+          border: Border.all(
+            color: isHighlighted ? Colors.red : Colors.white,
+            width: isHighlighted ? 4 : 2,
+          ),
+          boxShadow: isHighlighted
+              ? [
+                  BoxShadow(
+                    color: Colors.red.withOpacity(0.6),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+        ),
+        child: Center(
+          child: Text(
+            '${player.jerseyNumber}',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
-          const SizedBox(height: 2),
-          // Player sprite or emoji
-          _buildPlayerSprite(isYellow: true, size: 50),
-        ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildPlayerSprite({required bool isYellow, required double size}) {
-    // Try to use image, fallback to emoji
-    if (_playerImageLoaded) {
-      return Image.asset(
-        isYellow
-            ? 'assets/images/soccer_math/player_yellow.png'
-            : 'assets/images/soccer_math/player_blue.png',
-        package: 'kindlewood_games',
-        width: size,
-        height: size,
-        errorBuilder: (context, error, stackTrace) {
-          return Text(
-            '🧒',
-            style: TextStyle(fontSize: size * 0.8),
-          );
-        },
-      );
-    }
-    // Emoji fallback - boy with upper body
-    return Text(
-      '🧒',
-      style: TextStyle(fontSize: size * 0.8),
     );
   }
 
@@ -759,56 +714,67 @@ class _SoccerMathScreenState extends State<SoccerMathScreen>
         builder: (context, child) {
           final animatedPos = _ballAnimation.value;
           return Positioned(
-            left: animatedPos.dx * fieldSize.width - 15,
-            top: animatedPos.dy * fieldSize.height - 15,
-            child: const Text('⚽', style: TextStyle(fontSize: 30)),
+            left: animatedPos.dx * fieldSize.width - 20,
+            top: animatedPos.dy * fieldSize.height - 20,
+            child: const Text('⚽', style: TextStyle(fontSize: 40)),
           );
         },
       );
     }
 
     return Positioned(
-      left: ballPos.dx * fieldSize.width - 15,
-      top: ballPos.dy * fieldSize.height - 15,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          const Text('⚽', style: TextStyle(fontSize: 30)),
-          // Aim arrow
-          if (!_ballMoving)
-            Positioned(
-              left: 15,
-              top: 15,
-              child: Transform.rotate(
-                angle: _aimAngle,
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.red, Colors.red.withOpacity(0)],
-                    ),
-                    borderRadius: BorderRadius.circular(2),
+      left: ballPos.dx * fieldSize.width - 20,
+      top: ballPos.dy * fieldSize.height - 20,
+      child: SizedBox(
+        width: 120,
+        height: 120,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Ball
+            const Positioned(
+              left: 40,
+              top: 40,
+              child: Text('⚽', style: TextStyle(fontSize: 40)),
+            ),
+            // Aim arrow - larger and more visible
+            if (!_ballMoving)
+              Positioned(
+                left: 60,
+                top: 60,
+                child: Transform.rotate(
+                  angle: _aimAngle,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Arrow line
+                      Container(
+                        width: 50,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.red.withOpacity(0.5),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Arrow head
+                      CustomPaint(
+                        size: const Size(16, 16),
+                        painter: _ArrowHeadPainter(),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildPlayerCharacter(Size fieldSize) {
-    final ballHolder = _game.ballHolder;
-    if (ballHolder == null) return const SizedBox();
-
-    final x = ballHolder.position.dx * fieldSize.width;
-    final y = ballHolder.position.dy * fieldSize.height;
-
-    return Positioned(
-      left: x - 50,
-      top: y - 20,
-      child: _buildPlayerSprite(isYellow: false, size: 60),
     );
   }
 
@@ -1075,6 +1041,27 @@ class _FieldMarkingsPainter extends CustomPainter {
           size.height * 0.5),
       paint,
     );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Custom painter for arrow head
+class _ArrowHeadPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, size.height / 2)
+      ..lineTo(0, size.height)
+      ..close();
+
+    canvas.drawPath(path, paint);
   }
 
   @override
